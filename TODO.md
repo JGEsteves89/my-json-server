@@ -4,6 +4,6 @@
 [x] - the app name token validation generates the the folder in which the data is stored
 [x] - make a README
 [x] - the app keys and names should no be a config of env/docker files but a json that I can change any time without having to rebuild
-[ ] - prepare for docker
+[x] - prepare for docker
+[x] - publish
 [ ] - create the client that can use this and a template or doc or example
-[ ] - publish
