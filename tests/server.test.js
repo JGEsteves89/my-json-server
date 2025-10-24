@@ -10,7 +10,6 @@ const wsUrl = `ws://localhost:${CONFIG.PORT}${pathId}`;
 const token = CONFIG.API_TOKENS['TEST_APP'];
 const dummy = { dummy: 'data' };
 
-
 beforeAll(async () => {
   await server.start();
 });
