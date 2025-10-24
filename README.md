@@ -4,11 +4,11 @@ A lightweight, token-authenticated JSON file server with real-time WebSocket sup
 
 ## Features
 
-- **Token-based Authentication**: Secure API access using API tokens with per-app isolation
 - **RESTful API**: Simple HTTP endpoints for GET, POST (create/update), and DELETE operations
+- **Token-based Authentication**: Secure API access using API tokens with per-app isolation
 - **Real-time Updates**: WebSocket support for live notifications when files change
 - **Rate Limiting**: Built-in protection against abuse with configurable rate limits
-- **Comprehensive Logging**: Structured logging with Winston for debugging and monitoring
+- **Easy to use**: Create, save or get a json. you can watch for changes on a given json.
 - **Error Handling**: Standardized error responses with clear error codes and messages
 - **Data Validation**: Request validation and path sanitization for security
 - **ES Modules**: Modern JavaScript with ES6 modules support

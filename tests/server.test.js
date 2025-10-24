@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import request from 'supertest';
 import WebSocket from 'ws';
 
@@ -7,7 +8,7 @@ import { CONFIG } from '../src/config.js';
 const app = server.app;
 const pathId = '/a';
 const wsUrl = `ws://localhost:${CONFIG.PORT}${pathId}`;
-const token = CONFIG.API_TOKENS['TEST_APP'];
+const token = JSON.parse(fs.readFileSync(CONFIG.API_TOKENS_PATH).toString())['TEST_APP'];
 const dummy = { dummy: 'data' };
 
 beforeAll(async () => {
