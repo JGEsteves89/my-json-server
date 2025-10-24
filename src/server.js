@@ -1,10 +1,10 @@
-import express from "express";
-import bodyParser from "body-parser";
-import rateLimit from "express-rate-limit";
+import express from 'express';
+import bodyParser from 'body-parser';
+import rateLimit from 'express-rate-limit';
 
 import { CONFIG } from './config.js';
 import { ensureDataDir } from './utils.js';
-import { apiTokenMiddleware } from "./apiTokenMiddleware.js";
+import { apiTokenMiddleware } from './apiTokenMiddleware.js';
 import WebSocketManager from './websocket.js';
 import routes from './routes.js';
 
@@ -44,14 +44,12 @@ class Server {
         console.log(`Server running on http://localhost:${CONFIG.PORT}`);
         resolve();
       });
-      this.server.on("upgrade", (req, socket, head) =>
-        this.wsManager.handleUpgrade(req, socket, head)
-      );
+      this.server.on('upgrade', (req, socket, head) => this.wsManager.handleUpgrade(req, socket, head));
     });
   }
 
   async stop() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.wsManager.closeAll(); // implement closeAll() to close WS
       this.server.close(resolve);
     });

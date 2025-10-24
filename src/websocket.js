@@ -1,7 +1,7 @@
-import { WebSocketServer } from "ws";
+import { WebSocketServer } from 'ws';
 import { pathIdentifier, jsonPath, prettyPrint, shortify } from './utils.js';
 import { createLogger } from './logger.js';
-import { validateApiToken } from "./auth.js";
+import { validateApiToken } from './auth.js';
 
 class WebSocketManager {
   constructor() {
@@ -15,7 +15,7 @@ class WebSocketManager {
    * @param {Object|null} data - New data or null for deletion
    */
   broadcastChange(jsonFile, data, appName) {
-    const log = createLogger(appName, "WS");
+    const log = createLogger(appName, 'WS');
 
     const clients = this.watchers.get(jsonFile);
     if (clients) {
@@ -25,9 +25,9 @@ class WebSocketManager {
           ws.send(message);
         }
       }
-      log.info("Broadcast chenged to", prettyPrint({ clientsListening: clients.length, path: jsonFile, data: shortify(data) }));
+      log.info('Broadcast chenged to', prettyPrint({ clientsListening: clients.length, path: jsonFile, data: shortify(data) }));
     } else {
-      log.info("No clients watching this file", { jsonFile });
+      log.info('No clients watching this file', { jsonFile });
     }
   }
 
@@ -40,18 +40,18 @@ class WebSocketManager {
   handleUpgrade(req, socket, head) {
     const token = req.headers['x-api-token'];
     const appName = validateApiToken(token);
-    const log = createLogger(appName, "WS", req.url);
+    const log = createLogger(appName, 'WS', req.url);
 
     if (!appName) {
       log.info('Forbidden WebSocket connection');
-      socket.write("HTTP/1.1 403 Forbidden\r\n\r\n");
+      socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
       socket.destroy();
       return;
     }
 
-    this.wss.handleUpgrade(req, socket, head, ws => {
+    this.wss.handleUpgrade(req, socket, head, (ws) => {
       const url = new URL(req.url, `http://${req.headers.host}`);
-      const parts = url.pathname.split("/").filter(Boolean);
+      const parts = url.pathname.split('/').filter(Boolean);
       const file = jsonPath(parts, appName);
       const watchPath = pathIdentifier(file, appName);
 
@@ -59,13 +59,13 @@ class WebSocketManager {
         this.watchers.set(watchPath, new Set());
       }
       this.watchers.get(watchPath).add(ws);
-      log.info("Client added to watchers", { path: watchPath, totalWatchers: this.watchers.get(watchPath).size });
+      log.info('Client added to watchers', { path: watchPath, totalWatchers: this.watchers.get(watchPath).size });
 
-      ws.on("close", () => {
+      ws.on('close', () => {
         const clients = this.watchers.get(watchPath);
         if (clients) {
           clients.delete(ws);
-          log.info("Client removed from watchers", { remainingWatchers: clients.size });
+          log.info('Client removed from watchers', { remainingWatchers: clients.size });
           if (clients.size === 0) {
             this.watchers.delete(watchPath);
           }

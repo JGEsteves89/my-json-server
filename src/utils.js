@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 import { CONFIG } from './config.js';
 
 /**
@@ -8,12 +8,12 @@ import { CONFIG } from './config.js';
  * @returns {string} - Resolved file path
  */
 export function jsonPath(parts, appName) {
-  const safeParts = parts.map(p => p.replace(/[^a-zA-Z0-9_-]/g, ""));
-  const filePath = path.join(CONFIG.DATA_DIR, appName, ...safeParts) + ".json";
+  const safeParts = parts.map((p) => p.replace(/[^a-zA-Z0-9_-]/g, ''));
+  const filePath = path.join(CONFIG.DATA_DIR, appName, ...safeParts) + '.json';
   const resolved = path.resolve(filePath);
 
   if (!resolved.startsWith(path.resolve(CONFIG.DATA_DIR))) {
-    throw new Error("Invalid path");
+    throw new Error('Invalid path');
   }
   return resolved;
 }
@@ -42,7 +42,7 @@ export function fileExists(filePath) {
  * @returns {Object} - Parsed JSON data
  */
 export function readJsonFile(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
 /**
@@ -71,7 +71,7 @@ export function deleteFile(filePath) {
 export function pathIdentifier(filePath, appName) {
   const cwdData = path.join(process.cwd(), CONFIG.DATA_DIR, appName);
   const relativePath = path.relative(cwdData, filePath);
-  return '/' + relativePath.replace(/\.json$/, "");
+  return '/' + relativePath.replace(/\.json$/, '');
 }
 
 /**
@@ -92,5 +92,5 @@ export function prettyPrint(object) {
  */
 export function shortify(object, len = 100) {
   const str = JSON.stringify(object);
-  return str.length < len ? str : str.substring(len) + "...";
+  return str.length < len ? str : str.substring(len) + '...';
 }
