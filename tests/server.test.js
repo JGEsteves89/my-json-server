@@ -1,13 +1,15 @@
 import request from 'supertest';
+import WebSocket from 'ws';
+
 import server from '../src/server.js';
 import { CONFIG } from '../src/config.js';
-import WebSocket from 'ws';
 
 const app = server.app;
 const pathId = '/a';
 const wsUrl = `ws://localhost:${CONFIG.PORT}${pathId}`;
 const token = CONFIG.API_TOKENS['TEST_APP'];
 const dummy = { dummy: 'data' };
+
 
 beforeAll(async () => {
   await server.start();
