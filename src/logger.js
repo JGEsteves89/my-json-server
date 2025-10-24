@@ -1,5 +1,5 @@
 import winston from 'winston';
-import util from 'util';
+import util from 'node:util';
 
 const { format } = winston;
 
@@ -29,9 +29,10 @@ export const createLogger = (appName = '???', method = '-', route = '-') =>
     format: format.combine(
       format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
       utilFormatter(), // <-- here is your custom format
-      format.printf(({ message, timestamp }) => {
-        return `[${colors.blue}${timestamp}${colors.reset}][${colors.cyan}${appName ?? '???'}${colors.reset}][${colors.green}${method}${colors.reset}][${colors.magenta}${route}${colors.reset}]: ${message}`;
-      })
+      format.printf(
+        ({ message, timestamp }) =>
+          `[${colors.blue}${timestamp}${colors.reset}][${colors.cyan}${appName ?? '???'}${colors.reset}][${colors.green}${method}${colors.reset}][${colors.magenta}${route}${colors.reset}]: ${message}`,
+      ),
     ),
     transports: [new winston.transports.Console()],
   });

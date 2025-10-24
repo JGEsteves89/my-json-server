@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { CONFIG } from './config.js';
 
 /**
@@ -79,7 +79,7 @@ export function pathIdentifier(filePath, appName) {
  * @param {any} object - Object to be printed
  */
 export function prettyPrint(object) {
-  let output = [];
+  const output = [];
   for (const [attribute, value] of Object.entries(object)) {
     output.push(`\t- ${attribute}: ${JSON.stringify(value)}`);
   }

@@ -25,7 +25,10 @@ class WebSocketManager {
           ws.send(message);
         }
       }
-      log.info('Broadcast chenged to', prettyPrint({ clientsListening: clients.length, path: jsonFile, data: shortify(data) }));
+      log.info(
+        'Broadcast chenged to',
+        prettyPrint({ clientsListening: clients.length, path: jsonFile, data: shortify(data) }),
+      );
     } else {
       log.info('No clients watching this file', { jsonFile });
     }
@@ -59,7 +62,10 @@ class WebSocketManager {
         this.watchers.set(watchPath, new Set());
       }
       this.watchers.get(watchPath).add(ws);
-      log.info('Client added to watchers', { path: watchPath, totalWatchers: this.watchers.get(watchPath).size });
+      log.info('Client added to watchers', {
+        path: watchPath,
+        totalWatchers: this.watchers.get(watchPath).size,
+      });
 
       ws.on('close', () => {
         const clients = this.watchers.get(watchPath);

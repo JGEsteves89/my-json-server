@@ -1,6 +1,14 @@
 import express from 'express';
 import { createLogger } from './logger.js';
-import { jsonPath, fileExists, readJsonFile, writeJsonFile, deleteFile, pathIdentifier, shortify } from './utils.js';
+import {
+  jsonPath,
+  fileExists,
+  readJsonFile,
+  writeJsonFile,
+  deleteFile,
+  pathIdentifier,
+  shortify,
+} from './utils.js';
 
 const router = express.Router();
 

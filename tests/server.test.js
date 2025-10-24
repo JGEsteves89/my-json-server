@@ -61,12 +61,14 @@ describe('API Access Control and WebSocket Behavior', () => {
     expect(res.statusCode).toBe(404);
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests
   it('blocks WebSocket connection without token', (done) => {
     const ws = new WebSocket(wsUrl);
     ws.on('open', () => done(new Error('Connection should be denied')));
     ws.on('error', () => done());
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests
   it('allows WebSocket connection with valid token', (done) => {
     const ws = new WebSocket(wsUrl, { headers: { 'x-api-token': token } });
     ws.on('open', () => done());

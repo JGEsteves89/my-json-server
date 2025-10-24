@@ -7,6 +7,7 @@ import { ensureDataDir } from './utils.js';
 import { apiTokenMiddleware } from './apiTokenMiddleware.js';
 import WebSocketManager from './websocket.js';
 import routes from './routes.js';
+import { createLogger } from './logger.js';
 
 class Server {
   constructor() {
@@ -41,10 +42,13 @@ class Server {
       ensureDataDir();
 
       this.server = this.app.listen(CONFIG.PORT, () => {
-        console.log(`Server running on http://localhost:${CONFIG.PORT}`);
+        const log = createLogger('SYS', '', '');
+        log(`Server running on http://localhost:${CONFIG.PORT}`);
         resolve();
       });
-      this.server.on('upgrade', (req, socket, head) => this.wsManager.handleUpgrade(req, socket, head));
+      this.server.on('upgrade', (req, socket, head) =>
+        this.wsManager.handleUpgrade(req, socket, head),
+      );
     });
   }
 
@@ -62,5 +66,7 @@ export default server; // export the express app for Supertest
 
 // Only auto-start if not in test environment
 if (process.env.NODE_ENV !== 'test') {
-  await server.start();
+  (async () => {
+    await server.start();
+  })();
 }
