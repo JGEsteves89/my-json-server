@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import { CONFIG } from './config.js';
 import { ensureDataDir } from './utils.js';
 import { apiTokenMiddleware } from './apiTokenMiddleware.js';
+import { errorHandler } from './errorHandler.js';
 import WebSocketManager from './websocket.js';
 import routes from './routes.js';
 import { createLogger } from './logger.js';
@@ -25,7 +26,7 @@ class Server {
     const limiter = rateLimit(CONFIG.RATE_LIMIT);
     this.app.use(limiter);
 
-    // Set up the token middleware
+    // Set up token validation middleware
     this.app.use(apiTokenMiddleware);
 
     // Make WebSocket manager available to routes
@@ -34,6 +35,8 @@ class Server {
 
   setupRoutes() {
     this.app.use(routes);
+    // Global error handler must be registered after all routes
+    this.app.use(errorHandler);
   }
 
   async start() {
@@ -42,8 +45,8 @@ class Server {
       ensureDataDir();
 
       this.server = this.app.listen(CONFIG.PORT, () => {
-        const log = createLogger('SYS', '', '');
-        log.info(`Server running on http://localhost:${CONFIG.PORT}`);
+        const log = createLogger('SYSTEM', 'SERVER', 'startup');
+        log.info(`Server started on http://localhost:${CONFIG.PORT}`);
         resolve();
       });
       this.server.on('upgrade', (req, socket, head) =>

@@ -20,20 +20,23 @@ afterAll(async () => {
 describe('API Access Control and WebSocket Behavior', () => {
   it('rejects GET without token', async () => {
     const res = await request(app).get(pathId);
-    expect(res.statusCode).toBe(401);
-    expect(res.body.message).toMatch(/Forbidden/);
+    expect(res.statusCode).toBe(403);
+    expect(res.body.error).toBe('FORBIDDEN');
+    expect(res.body.message).toBe('API token is required');
   });
 
   it('rejects POST without token', async () => {
     const res = await request(app).post(pathId).send(dummy);
-    expect(res.statusCode).toBe(401);
-    expect(res.body.message).toMatch(/Forbidden/);
+    expect(res.statusCode).toBe(403);
+    expect(res.body.error).toBe('FORBIDDEN');
+    expect(res.body.message).toBe('API token is required');
   });
 
   it('rejects DELETE without token', async () => {
     const res = await request(app).delete(pathId);
-    expect(res.statusCode).toBe(401);
-    expect(res.body.message).toMatch(/Forbidden/);
+    expect(res.statusCode).toBe(403);
+    expect(res.body.error).toBe('FORBIDDEN');
+    expect(res.body.message).toBe('API token is required');
   });
 
   it('creates JSON when authenticated', async () => {
@@ -46,7 +49,7 @@ describe('API Access Control and WebSocket Behavior', () => {
   it('saves JSON when authenticated', async () => {
     const res = await request(app).post(pathId).set('x-api-token', token).send(dummy);
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe('saved');
+    expect(res.body.status).toBe('updated');
     expect(res.body.path).toBe(pathId);
   });
 
@@ -66,6 +69,8 @@ describe('API Access Control and WebSocket Behavior', () => {
   it('returns not found for GET on non-existent resource', async () => {
     const res = await request(app).get(pathId).set('x-api-token', token);
     expect(res.statusCode).toBe(404);
+    expect(res.body.error).toBe('NOT_FOUND');
+    expect(res.body.message).toBe('The requested file could not be found');
   });
 
   // eslint-disable-next-line sonarjs/assertions-in-tests

@@ -1,5 +1,5 @@
 import { WebSocketServer } from 'ws';
-import { pathIdentifier, jsonPath, prettyPrint, shortify } from './utils.js';
+import { pathIdentifier, jsonPath, shortify } from './utils.js';
 import { createLogger } from './logger.js';
 import { validateApiToken } from './auth.js';
 
@@ -15,7 +15,7 @@ class WebSocketManager {
    * @param {Object|null} data - New data or null for deletion
    */
   broadcastChange(jsonFile, data, appName) {
-    const log = createLogger(appName, 'WS');
+    const log = createLogger(appName, 'WS', jsonFile);
 
     const clients = this.watchers.get(jsonFile);
     if (clients) {
@@ -25,12 +25,13 @@ class WebSocketManager {
           ws.send(message);
         }
       }
-      log.info(
-        'Broadcast change',
-        prettyPrint({ clientsListening: clients.length, path: jsonFile, data: shortify(data) }),
-      );
+      log.info('Broadcasted change', {
+        clientsListening: clients.size,
+        path: jsonFile,
+        data: shortify(data),
+      });
     } else {
-      log.info('No clients watching this file', { jsonFile });
+      log.info('No clients watching file', { jsonFile });
     }
   }
 
@@ -43,19 +44,20 @@ class WebSocketManager {
   handleUpgrade(req, socket, head) {
     const token = req.headers['x-api-token'];
     const appName = validateApiToken(token);
-    const log = createLogger(appName, 'WS', req.url);
+    const log = createLogger(appName ?? 'SYSTEM', 'WS', req.url);
 
     if (!appName) {
-      log.info('Forbidden WebSocket connection');
+      const message = 'API token is required';
+      log.info(`Token validation failed: ${message}`);
       socket.write(
-        'HTTP/1.1 401 INVALID_TOKEN \r\n' +
+        'HTTP/1.1 403 Forbidden\r\n' +
           'Content-Type: application/json\r\n' +
           'Connection: close\r\n' +
           '\r\n' +
           JSON.stringify({
-            error: 'INVALID_TOKEN/`MISSING_TOKEN',
-            message: 'Forbidden: Missing API Token',
-            statusCode: 401,
+            error: 'FORBIDDEN',
+            message,
+            statusCode: 403,
           }),
       );
       socket.destroy();
@@ -68,14 +70,16 @@ class WebSocketManager {
       const file = jsonPath(parts, appName);
 
       if (!file) {
+        const message = 'Invalid path provided';
+        log.info(`Path validation failed: ${message}`);
         socket.write(
-          'HTTP/1.1 400 VALIDATION_ERROR \r\n' +
+          'HTTP/1.1 400 Bad Request\r\n' +
             'Content-Type: application/json\r\n' +
             'Connection: close\r\n' +
             '\r\n' +
             JSON.stringify({
-              error: '`VALIDATION_ERROR',
-              message: 'Path name is not valid',
+              error: 'VALIDATION_ERROR',
+              message,
               statusCode: 400,
             }),
         );
