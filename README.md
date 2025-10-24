@@ -367,11 +367,12 @@ For issues, questions, or suggestions:
 
 ## Changelog
 
-### Version 1.0.1 (Current)
-- Updated to version 1.0.1
+### Version 1.0.2 (Current)
+- Updated to version 1.0.2
 - Changed from API_TOKENS environment variable to API_TOKENS_PATH for security and flexibility
 - RESTful API endpoints
 - WebSocket real-time updates
 - Rate limiting
 - Comprehensive logging
 - Full test coverage
+- Docker
