@@ -1,4 +1,4 @@
-# MyJsonServer
+# My-JSON-server
 
 A lightweight, token-authenticated JSON file server with real-time WebSocket support. Store and retrieve JSON data files with built-in access control, rate limiting, and comprehensive logging.
 
@@ -59,11 +59,11 @@ The server will start on `http://localhost:3000` by default.
 
 ## Docker Setup
 
-You can run MyJsonServer using Docker:
+You can run my-json-server using Docker:
 
 1. Build the Docker image:
 ```bash
-docker build -t myjsonserver .
+docker build -t my-json-server .
 ```
 
 2. Run the container with necessary environment variables and volume mounts:
@@ -74,8 +74,8 @@ docker run -d \
   -v $(pwd)/defaultApiKeys.json:/app/defaultApiKeys.json \
   -e API_TOKENS_PATH=/app/defaultApiKeys.json \
   -e PORT=3000 \
-  --name myjsonserver \
-  myjsonserver
+  --name my-json-server \
+  my-json-server
 ```
 
 This will:
