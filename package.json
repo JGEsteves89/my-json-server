@@ -9,7 +9,13 @@
     "test": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "docker:build": "docker build -t ijimiguel/my-json-server:$(node -p \"require('./package.json').version\") .",
+    "docker:push": "TAG=$(node -p \"require('./package.json').version\") && docker tag ijimiguel/my-json-server:$TAG ijimiguel/my-json-server:latest && docker push ijimiguel/my-json-server:$TAG && docker push ijimiguel/my-json-server:latest",
+    "docker:release": "npm run docker:build && npm run docker:push",
+    "release:patch": "npm version patch && npm run docker:release && git push --follow-tags",
+    "release:minor": "npm version minor && npm run docker:release && git push --follow-tags",
+    "release:major": "npm version major && npm run docker:release && git push --follow-tags"
   },
   "keywords": [],
   "author": "",
