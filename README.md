@@ -14,6 +14,17 @@ A lightweight, token-authenticated JSON file server with real-time WebSocket sup
 - **ES Modules**: Modern JavaScript with ES6 modules support
 - **Test Coverage**: Full test suite with Jest and Supertest
 
+
+## Usage
+
+| Method | Path | Description | Auth Required | Returns |
+|--------|------|-------------|---|---------|
+| GET | `/*path` | Retrieve JSON file | Yes | File content or 404 |
+| POST | `/*path` | Create or update JSON file | Yes | Status and path |
+| DELETE | `/*path` | Delete JSON file | Yes | Status and path |
+| WS | `/*path` | Subscribe to file changes | Yes | Real-time updates |
+
+
 ## Installation
 
 ### Prerequisites
@@ -25,11 +36,16 @@ A lightweight, token-authenticated JSON file server with real-time WebSocket sup
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd myJsonServer
+git clone https://github.com/JGEsteves89/my-json-server.git
+cd my-json-server
 ```
 
-2. Install dependencies:
+2. If you need to set the remote origin manually (e.g., for existing repositories):
+```bash
+git remote add origin https://github.com/JGEsteves89/my-json-server.git
+```
+
+3. Install dependencies:
 ```bash
 npm install
 ```
@@ -40,6 +56,33 @@ npm start
 ```
 
 The server will start on `http://localhost:3000` by default.
+
+## Docker Setup
+
+You can run MyJsonServer using Docker:
+
+1. Build the Docker image:
+```bash
+docker build -t myjsonserver .
+```
+
+2. Run the container with necessary environment variables and volume mounts:
+```bash
+docker run -d \
+  -p 3000:3000 \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/defaultApiKeys.json:/app/defaultApiKeys.json \
+  -e API_TOKENS_PATH=/app/defaultApiKeys.json \
+  -e PORT=3000 \
+  --name myjsonserver \
+  myjsonserver
+```
+
+This will:
+- Map port 3000 from the container to your host
+- Mount your local data directory to persist JSON files
+- Mount the API keys file
+- Set the required environment variables
 
 ## Configuration
 
@@ -52,8 +95,8 @@ PORT=3000
 # Data directory for storing JSON files
 DATA_DIR=./data
 
-# API tokens in JSON format (mapping app names to tokens)
-API_TOKENS='{"TEST_APP":"token_value","MY_APP":"another_token"}'
+# Path to JSON file containing API tokens (mapping app names to tokens)
+API_TOKENS_PATH=./defaultApiKeys.json
 
 # Rate limiting window (milliseconds)
 RATE_LIMIT_WINDOW_MS=60000
@@ -67,7 +110,7 @@ RATE_LIMIT_MAX=100
 ```bash
 PORT=8080 \
 DATA_DIR=./my_data \
-API_TOKENS='{"APP1":"secret_token_1","APP2":"secret_token_2"}' \
+API_TOKENS_PATH=./defaultApiKeys.json \
 npm start
 ```
 
@@ -245,7 +288,7 @@ The API returns standardized error responses with the following codes:
 ## Project Structure
 
 ```
-myJsonServer/
+my-json-server/
 ├── src/
 │   ├── server.js              # Express server setup
 │   ├── routes.js              # API endpoint handlers
@@ -324,9 +367,9 @@ For issues, questions, or suggestions:
 
 ## Changelog
 
-### Version 1.0.0 (Current)
-- Initial release
-- Token-based authentication
+### Version 1.0.1 (Current)
+- Updated to version 1.0.1
+- Changed from API_TOKENS environment variable to API_TOKENS_PATH for security and flexibility
 - RESTful API endpoints
 - WebSocket real-time updates
 - Rate limiting
