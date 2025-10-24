@@ -13,15 +13,8 @@ RUN npm ci --only=production
 # Copy the rest
 COPY . .
 
-# Create writable data dir
-RUN mkdir -p /app/data
-
 # Expose the internal port your app listens on (matches CONFIG.PORT default)
 EXPOSE 3000
-
-# Use a non-root user for safety
-RUN addgroup -S app && adduser -S app -G app
-USER app
 
 # Start command
 CMD ["npm","start"]

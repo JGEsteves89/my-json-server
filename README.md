@@ -2,6 +2,18 @@
 
 A lightweight, token-authenticated JSON file server with real-time WebSocket support. Store and retrieve JSON data files with built-in access control, rate limiting, and comprehensive logging.
 
+## Attention - issues
+
+There is currently many bugs, but this is serious: It affects when using the docker image:
+
+```bash
+[2025-10-24 22:50:53.247][SYSTEM][SERVER][startup]: Server started on http://localhost:3000
+[2025-10-24 22:51:50.930][TEST_APP][POST][/this/is/a/test]: File created {
+	path: '/../../../../../../app/data/TEST_APP/this/is/a/test',
+	data: '{"foo":"bar"}'
+}
+```
+
 ## Features
 
 - **RESTful API**: Simple HTTP endpoints for GET, POST (create/update), and DELETE operations
@@ -14,16 +26,14 @@ A lightweight, token-authenticated JSON file server with real-time WebSocket sup
 - **ES Modules**: Modern JavaScript with ES6 modules support
 - **Test Coverage**: Full test suite with Jest and Supertest
 
-
 ## Usage
 
-| Method | Path | Description | Auth Required | Returns |
-|--------|------|-------------|---|---------|
-| GET | `/*path` | Retrieve JSON file | Yes | File content or 404 |
-| POST | `/*path` | Create or update JSON file | Yes | Status and path |
-| DELETE | `/*path` | Delete JSON file | Yes | Status and path |
-| WS | `/*path` | Subscribe to file changes | Yes | Real-time updates |
-
+| Method | Path     | Description                | Auth Required | Returns             |
+| ------ | -------- | -------------------------- | ------------- | ------------------- |
+| GET    | `/*path` | Retrieve JSON file         | Yes           | File content or 404 |
+| POST   | `/*path` | Create or update JSON file | Yes           | Status and path     |
+| DELETE | `/*path` | Delete JSON file           | Yes           | Status and path     |
+| WS     | `/*path` | Subscribe to file changes  | Yes           | Real-time updates   |
 
 ## Installation
 
@@ -35,22 +45,26 @@ A lightweight, token-authenticated JSON file server with real-time WebSocket sup
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/JGEsteves89/my-json-server.git
 cd my-json-server
 ```
 
 2. If you need to set the remote origin manually (e.g., for existing repositories):
+
 ```bash
 git remote add origin https://github.com/JGEsteves89/my-json-server.git
 ```
 
 3. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the server:
+
 ```bash
 npm start
 ```
@@ -61,12 +75,16 @@ The server will start on `http://localhost:3000` by default.
 
 You can run my-json-server using Docker:
 
-1. Build the Docker image:
+1. Pull the image
+
 ```bash
-docker build -t my-json-server .
+docker pull ijimiguel/my-json-server:latest
 ```
 
+(Or specify a version tag, e.g. :1.0.2)
+
 2. Run the container with necessary environment variables and volume mounts:
+
 ```bash
 docker run -d \
   -p 3000:3000 \
@@ -75,10 +93,11 @@ docker run -d \
   -e API_TOKENS_PATH=/app/defaultApiKeys.json \
   -e PORT=3000 \
   --name my-json-server \
-  my-json-server
+  ijimiguel/my-json-server:latest
 ```
 
 This will:
+
 - Map port 3000 from the container to your host
 - Mount your local data directory to persist JSON files
 - Mount the API keys file
@@ -145,16 +164,18 @@ npm run format
 
 All endpoints require the `x-api-token` header with a valid API token.
 
-### GET /*path
+### GET /\*path
 
 Retrieve the JSON content of a file.
 
 **Request:**
+
 ```bash
 curl -H "x-api-token: YOUR_TOKEN" http://localhost:3000/mydata
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "key": "value",
@@ -165,6 +186,7 @@ curl -H "x-api-token: YOUR_TOKEN" http://localhost:3000/mydata
 ```
 
 **Response (404 Not Found):**
+
 ```json
 {
   "error": "NOT_FOUND",
@@ -173,11 +195,12 @@ curl -H "x-api-token: YOUR_TOKEN" http://localhost:3000/mydata
 }
 ```
 
-### POST /*path
+### POST /\*path
 
 Create or update a JSON file at the specified path.
 
 **Request:**
+
 ```bash
 curl -X POST \
   -H "x-api-token: YOUR_TOKEN" \
@@ -187,6 +210,7 @@ curl -X POST \
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "status": "created",
@@ -195,6 +219,7 @@ curl -X POST \
 ```
 
 Or if the file already exists:
+
 ```json
 {
   "status": "updated",
@@ -203,6 +228,7 @@ Or if the file already exists:
 ```
 
 **Response (400 Bad Request):**
+
 ```json
 {
   "error": "VALIDATION_ERROR",
@@ -211,11 +237,12 @@ Or if the file already exists:
 }
 ```
 
-### DELETE /*path
+### DELETE /\*path
 
 Delete a JSON file at the specified path.
 
 **Request:**
+
 ```bash
 curl -X DELETE \
   -H "x-api-token: YOUR_TOKEN" \
@@ -223,6 +250,7 @@ curl -X DELETE \
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "status": "deleted",
@@ -231,6 +259,7 @@ curl -X DELETE \
 ```
 
 **Response (404 Not Found):**
+
 ```json
 {
   "error": "NOT_FOUND",
@@ -244,9 +273,10 @@ curl -X DELETE \
 Connect to the WebSocket server to receive real-time updates when files change.
 
 **Connect:**
+
 ```javascript
 const ws = new WebSocket(`ws://localhost:3000/mydata`, {
-  headers: { 'x-api-token': 'YOUR_TOKEN' }
+  headers: { 'x-api-token': 'YOUR_TOKEN' },
 });
 
 ws.addEventListener('message', (event) => {
@@ -256,6 +286,7 @@ ws.addEventListener('message', (event) => {
 ```
 
 **Message Format:**
+
 ```json
 {
   "path": "/mydata",
@@ -267,23 +298,23 @@ ws.addEventListener('message', (event) => {
 
 ## API Endpoints Reference Table
 
-| Method | Path | Description | Auth Required | Returns |
-|--------|------|-------------|---|---------|
-| GET | `/*path` | Retrieve JSON file | Yes | File content or 404 |
-| POST | `/*path` | Create or update JSON file | Yes | Status and path |
-| DELETE | `/*path` | Delete JSON file | Yes | Status and path |
-| WS | `/*path` | Subscribe to file changes | Yes | Real-time updates |
+| Method | Path     | Description                | Auth Required | Returns             |
+| ------ | -------- | -------------------------- | ------------- | ------------------- |
+| GET    | `/*path` | Retrieve JSON file         | Yes           | File content or 404 |
+| POST   | `/*path` | Create or update JSON file | Yes           | Status and path     |
+| DELETE | `/*path` | Delete JSON file           | Yes           | Status and path     |
+| WS     | `/*path` | Subscribe to file changes  | Yes           | Real-time updates   |
 
 ## Error Codes
 
 The API returns standardized error responses with the following codes:
 
-| Error Code | HTTP Status | Description |
-|-----------|------------|-------------|
-| `FORBIDDEN` | 403 | Invalid or missing API token |
-| `NOT_FOUND` | 404 | Requested file does not exist |
-| `VALIDATION_ERROR` | 400 | Invalid path or request body |
-| `INTERNAL_ERROR` | 500 | Server error (check logs) |
+| Error Code         | HTTP Status | Description                   |
+| ------------------ | ----------- | ----------------------------- |
+| `FORBIDDEN`        | 403         | Invalid or missing API token  |
+| `NOT_FOUND`        | 404         | Requested file does not exist |
+| `VALIDATION_ERROR` | 400         | Invalid path or request body  |
+| `INTERNAL_ERROR`   | 500         | Server error (check logs)     |
 
 ## Project Structure
 
@@ -312,22 +343,26 @@ my-json-server/
 Contributions are welcome and encouraged! Please follow these guidelines:
 
 1. **Fork the repository** and create a feature branch
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. **Make your changes** and ensure code quality
+
    ```bash
    npm run lint:fix
    npm run format
    ```
 
 3. **Add or update tests** for new functionality
+
    ```bash
    npm test
    ```
 
 4. **Commit with clear messages**
+
    ```bash
    git commit -m "feat: add new feature"
    ```
@@ -361,6 +396,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ## Support
 
 For issues, questions, or suggestions:
+
 - Open an issue on GitHub
 - Check existing documentation
 - Review test cases for usage examples
@@ -368,6 +404,7 @@ For issues, questions, or suggestions:
 ## Changelog
 
 ### Version 1.0.2 (Current)
+
 - Updated to version 1.0.2
 - Changed from API_TOKENS environment variable to API_TOKENS_PATH for security and flexibility
 - RESTful API endpoints
