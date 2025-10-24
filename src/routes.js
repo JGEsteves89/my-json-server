@@ -19,8 +19,8 @@ router.get("/*path", (req, res) => {
   const log = createLogger(req.appName, "GET", req.path);
   try {
     const parts = req.params.path;
-    const file = jsonPath(parts);
-    const pathId = pathIdentifier(file);
+    const file = jsonPath(parts, req.appName);
+    const pathId = pathIdentifier(file, req.appName);
 
     if (!fileExists(file)) {
       log.info("File not found. Returning 404");
@@ -44,8 +44,8 @@ router.post("/*path", (req, res) => {
 
   try {
     const parts = req.params.path;
-    const file = jsonPath(parts);
-    const pathId = pathIdentifier(file);
+    const file = jsonPath(parts, req.appName);
+    const pathId = pathIdentifier(file, req.appName);
 
     writeJsonFile(file, req.body);
 
@@ -67,8 +67,8 @@ router.delete("/*path", (req, res) => {
 
   try {
     const parts = req.params.path;
-    const file = jsonPath(parts);
-    const pathId = pathIdentifier(file);
+    const file = jsonPath(parts, req.appName);
+    const pathId = pathIdentifier(file, req.appName);
 
     if (fileExists(file)) {
       log.info("Deleting file");

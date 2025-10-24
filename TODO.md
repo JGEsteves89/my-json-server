@@ -13,7 +13,7 @@
   message: '{"path":"cantina/a","data":{"prompt":"This is new new new new"}}'
 ```
 [x] - Need to test if the broad cast works with the deletion of a file
-[ ] - Create tests so I am not running this constently
-[ ] - the app name token validation generates the the folder in which the data is stored
+[x] - Create tests so I am not running this constently
+[x] - the app name token validation generates the the folder in which the data is stored
 [ ] - the app keys and names should no be a config of env/docker files but a json that I can change any time without having to rebuild
 [ ] - create the client that can use this and a template or doc or example

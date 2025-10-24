@@ -51,7 +51,9 @@ class WebSocketManager {
 
     this.wss.handleUpgrade(req, socket, head, ws => {
       const url = new URL(req.url, `http://${req.headers.host}`);
-      const watchPath = pathIdentifier(jsonPath(url.pathname.split("/").filter(Boolean)));
+      const parts = url.pathname.split("/").filter(Boolean);
+      const file = jsonPath(parts, appName);
+      const watchPath = pathIdentifier(file, appName);
 
       if (!this.watchers.has(watchPath)) {
         this.watchers.set(watchPath, new Set());
