@@ -25,7 +25,7 @@ class Server {
     const limiter = rateLimit(CONFIG.RATE_LIMIT);
     this.app.use(limiter);
 
-    // Set up the token () => {
+    // Set up the token middleware
     this.app.use(apiTokenMiddleware);
 
     // Make WebSocket manager available to routes
@@ -43,7 +43,7 @@ class Server {
 
       this.server = this.app.listen(CONFIG.PORT, () => {
         const log = createLogger('SYS', '', '');
-        log(`Server running on http://localhost:${CONFIG.PORT}`);
+        log.info(`Server running on http://localhost:${CONFIG.PORT}`);
         resolve();
       });
       this.server.on('upgrade', (req, socket, head) =>

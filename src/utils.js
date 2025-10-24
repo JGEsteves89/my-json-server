@@ -5,11 +5,19 @@ import { CONFIG } from './config.js';
 /**
  * Build full path for JSON file with security checks
  * @param {string[]} parts - Path parts to join
- * @returns {string} - Resolved file path
+ * @param {string} appName - name of the app
+ * @returns {string | null} - Resolved file path
  */
 export function jsonPath(parts, appName) {
-  const safeParts = parts.map((p) => p.replace(/[^a-zA-Z0-9_-]/g, ''));
-  const filePath = path.join(CONFIG.DATA_DIR, appName, ...safeParts) + '.json';
+  const valid = /^[a-zA-Z0-9_-]+$/;
+
+  for (const p of parts) {
+    if (!valid.test(p)) {
+      return null;
+    }
+  }
+
+  const filePath = path.join(CONFIG.DATA_DIR, appName, ...parts) + '.json';
   const resolved = path.resolve(filePath);
 
   if (!resolved.startsWith(path.resolve(CONFIG.DATA_DIR))) {
@@ -62,6 +70,20 @@ export function writeJsonFile(filePath, data) {
  */
 export function deleteFile(filePath) {
   fs.unlinkSync(filePath);
+}
+
+/**
+ * Returns true/false if a body can be serealise
+ * @param {Object} data - Data to validate
+ * @returns {boolean}
+ */
+export function validJsonData(data) {
+  try {
+    JSON.stringify(data);
+  } catch {
+    return false;
+  }
+  return true;
 }
 
 /**

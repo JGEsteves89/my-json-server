@@ -20,23 +20,30 @@ afterAll(async () => {
 describe('API Access Control and WebSocket Behavior', () => {
   it('rejects GET without token', async () => {
     const res = await request(app).get(pathId);
-    expect(res.statusCode).toBe(403);
-    expect(res.body.error).toMatch(/Forbidden/);
+    expect(res.statusCode).toBe(401);
+    expect(res.body.message).toMatch(/Forbidden/);
   });
 
   it('rejects POST without token', async () => {
     const res = await request(app).post(pathId).send(dummy);
-    expect(res.statusCode).toBe(403);
-    expect(res.body.error).toMatch(/Forbidden/);
+    expect(res.statusCode).toBe(401);
+    expect(res.body.message).toMatch(/Forbidden/);
   });
 
   it('rejects DELETE without token', async () => {
     const res = await request(app).delete(pathId);
-    expect(res.statusCode).toBe(403);
-    expect(res.body.error).toMatch(/Forbidden/);
+    expect(res.statusCode).toBe(401);
+    expect(res.body.message).toMatch(/Forbidden/);
   });
 
   it('creates JSON when authenticated', async () => {
+    const res = await request(app).post(pathId).set('x-api-token', token).send(dummy);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('created');
+    expect(res.body.path).toBe(pathId);
+  });
+
+  it('saves JSON when authenticated', async () => {
     const res = await request(app).post(pathId).set('x-api-token', token).send(dummy);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('saved');
@@ -81,7 +88,25 @@ describe('API Access Control and WebSocket Behavior', () => {
     ws.on('open', async () => {
       const res = await request(app).post(pathId).set('x-api-token', token).send(dummy);
       expect(res.statusCode).toBe(200);
-      expect(res.body.status).toBe('saved');
+      expect(res.body.status).toBe('created');
+      expect(res.body.path).toBe(pathId);
+    });
+
+    ws.on('error', () => done(new Error('Unexpected WebSocket error')));
+    ws.on('message', (msg) => {
+      const data = JSON.parse(msg.toString());
+      expect(data.path).toBe(pathId);
+      done();
+    });
+  });
+
+  it('broadcasts WebSocket message on file delete', (done) => {
+    const ws = new WebSocket(wsUrl, { headers: { 'x-api-token': token } });
+
+    ws.on('open', async () => {
+      const res = await request(app).delete(pathId).set('x-api-token', token);
+      expect(res.statusCode).toBe(200);
+      expect(res.body.status).toBe('deleted');
       expect(res.body.path).toBe(pathId);
     });
 

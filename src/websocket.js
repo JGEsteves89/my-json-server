@@ -26,7 +26,7 @@ class WebSocketManager {
         }
       }
       log.info(
-        'Broadcast chenged to',
+        'Broadcast change',
         prettyPrint({ clientsListening: clients.length, path: jsonFile, data: shortify(data) }),
       );
     } else {
@@ -47,7 +47,17 @@ class WebSocketManager {
 
     if (!appName) {
       log.info('Forbidden WebSocket connection');
-      socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+      socket.write(
+        'HTTP/1.1 401 INVALID_TOKEN \r\n' +
+          'Content-Type: application/json\r\n' +
+          'Connection: close\r\n' +
+          '\r\n' +
+          JSON.stringify({
+            error: 'INVALID_TOKEN/`MISSING_TOKEN',
+            message: 'Forbidden: Missing API Token',
+            statusCode: 401,
+          }),
+      );
       socket.destroy();
       return;
     }
@@ -56,6 +66,23 @@ class WebSocketManager {
       const url = new URL(req.url, `http://${req.headers.host}`);
       const parts = url.pathname.split('/').filter(Boolean);
       const file = jsonPath(parts, appName);
+
+      if (!file) {
+        socket.write(
+          'HTTP/1.1 400 VALIDATION_ERROR \r\n' +
+            'Content-Type: application/json\r\n' +
+            'Connection: close\r\n' +
+            '\r\n' +
+            JSON.stringify({
+              error: '`VALIDATION_ERROR',
+              message: 'Path name is not valid',
+              statusCode: 400,
+            }),
+        );
+        socket.destroy();
+        return;
+      }
+
       const watchPath = pathIdentifier(file, appName);
 
       if (!this.watchers.has(watchPath)) {

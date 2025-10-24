@@ -23,7 +23,7 @@ const utilFormatter = format((info) => {
 });
 
 // Logger factory
-export const createLogger = (appName = '???', method = '-', route = '-') =>
+export const createLogger = (appName = '-', method = '-', route = '-') =>
   winston.createLogger({
     level: 'info',
     format: format.combine(
@@ -31,7 +31,7 @@ export const createLogger = (appName = '???', method = '-', route = '-') =>
       utilFormatter(), // <-- here is your custom format
       format.printf(
         ({ message, timestamp }) =>
-          `[${colors.blue}${timestamp}${colors.reset}][${colors.cyan}${appName ?? '???'}${colors.reset}][${colors.green}${method}${colors.reset}][${colors.magenta}${route}${colors.reset}]: ${message}`,
+          `[${colors.blue}${timestamp}${colors.reset}][${colors.cyan}${appName}${colors.reset}][${colors.green}${method}${colors.reset}][${colors.magenta}${route}${colors.reset}]: ${message}`,
       ),
     ),
     transports: [new winston.transports.Console()],
