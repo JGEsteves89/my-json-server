@@ -2,18 +2,6 @@
 
 A lightweight, token-authenticated JSON file server with real-time WebSocket support. Store and retrieve JSON data files with built-in access control, rate limiting, and comprehensive logging.
 
-## Attention - issues
-
-There is currently many bugs, but this is serious: It affects when using the docker image:
-
-```bash
-[2025-10-24 22:50:53.247][SYSTEM][SERVER][startup]: Server started on http://localhost:3000
-[2025-10-24 22:51:50.930][TEST_APP][POST][/this/is/a/test]: File created {
-	path: '/../../../../../../app/data/TEST_APP/this/is/a/test',
-	data: '{"foo":"bar"}'
-}
-```
-
 ## Features
 
 - **RESTful API**: Simple HTTP endpoints for GET, POST (create/update), and DELETE operations
@@ -85,15 +73,24 @@ docker pull ijimiguel/my-json-server:latest
 
 2. Run the container with necessary environment variables and volume mounts:
 
-```bash
-docker run -d \
-  -p 3000:3000 \
-  -v $(pwd)/data:/app/data \
-  -v $(pwd)/defaultApiKeys.json:/app/defaultApiKeys.json \
-  -e API_TOKENS_PATH=/app/defaultApiKeys.json \
-  -e PORT=3000 \
-  --name my-json-server \
-  ijimiguel/my-json-server:latest
+```yml
+# docker-compose.yml
+version: '3.9'
+
+services:
+  app:
+    image: ijimiguel/my-json-server:latest
+    user: '${UID}:${GID}' # has to have rights to the data folder and tokens_file
+    ports:
+      - '3000:3000' # external:internal, since CONFIG.PORT defaults to 3000
+    environment:
+      DATA_DIR: '/app/data' # app’s internal writable data dir
+      API_TOKENS_PATH: 'defaultApiKeys.json' # external user-provided config
+      RATE_LIMIT_WINDOW_MS: 60000
+      RATE_LIMIT_MAX: 100
+    volumes:
+      - ./data:/app/data # writable local folder for app data
+      - ./defaultApiKeys.json:/config/apiKeys.json:ro # user-provided token
 ```
 
 This will:
@@ -368,6 +365,7 @@ Contributions are welcome and encouraged! Please follow these guidelines:
    ```
 
 5. **Push to your branch** and create a Pull Request
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -403,13 +401,13 @@ For issues, questions, or suggestions:
 
 ## Changelog
 
-### Version 1.0.2 (Current)
+### Version
 
-- Updated to version 1.0.2
-- Changed from API_TOKENS environment variable to API_TOKENS_PATH for security and flexibility
-- RESTful API endpoints
-- WebSocket real-time updates
-- Rate limiting
-- Comprehensive logging
-- Full test coverage
-- Docker
+- 1.0.3 - Fix bug with permissions and path calculation when running on the docker
+- 1.0.2 - Changed from API_TOKENS environment variable to API_TOKENS_PATH for security and flexibility
+- 1.0.1 - RESTful API endpoints
+- 1.0.1 - WebSocket real-time updates
+- 1.0.1 - Rate limiting
+- 1.0.1 - Comprehensive logging
+- 1.0.1 - Full test coverage
+- 1.0.1 - Docker

@@ -10,6 +10,7 @@ const releaseId = pkg.releaseIdentifier || 'build';
 const fullVersion = pkg.fullVersion || `${version}-${releaseId}${buildNumber}`;
 
 function run(command) {
+  console.log(`> ${command}`);
   execSync(command, { stdio: 'inherit', shell: true });
 }
 
@@ -42,7 +43,7 @@ const scripts = {
 
   dockerStop: () => run('docker-compose down'),
 
-  dockerCompose: () => run('docker-compose up -d'),
+  dockerCompose: () => run('UID=$(id -u) GID=$(id -g) docker-compose up -d'),
 
   dockerRestart: () => {
     scripts.dockerPull();
@@ -51,18 +52,21 @@ const scripts = {
   },
 
   releasePatch: () => {
+    scripts.incrementBuild();
     run('npm version patch');
     scripts.dockerRelease();
     run('git push --follow-tags');
   },
 
   releaseMinor: () => {
+    scripts.incrementBuild();
     run('npm version minor');
     scripts.dockerRelease();
     run('git push --follow-tags');
   },
 
   releaseMajor: () => {
+    scripts.incrementBuild();
     run('npm version major');
     scripts.dockerRelease();
     run('git push --follow-tags');
