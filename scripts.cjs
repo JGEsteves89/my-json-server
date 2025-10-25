@@ -52,21 +52,18 @@ const scripts = {
   },
 
   releasePatch: () => {
-    scripts.incrementBuild();
     run('npm version patch');
     scripts.dockerRelease();
     run('git push --follow-tags');
   },
 
   releaseMinor: () => {
-    scripts.incrementBuild();
     run('npm version minor');
     scripts.dockerRelease();
     run('git push --follow-tags');
   },
 
   releaseMajor: () => {
-    scripts.incrementBuild();
     run('npm version major');
     scripts.dockerRelease();
     run('git push --follow-tags');
