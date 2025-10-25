@@ -27,7 +27,7 @@ const scripts = {
 
   dockerPush: () => {
     run(
-      `docker tag ijimiguel/my-json-server:${fullVersion} ijimiguel/my-json-server:latest && docker push ijimiguel/my-json-server:${version} && docker push ijimiguel/my-json-server:latest`,
+      `docker tag ijimiguel/my-json-server:${fullVersion} ijimiguel/my-json-server:latest && docker push ijimiguel/my-json-server:${fullVersion} && docker push ijimiguel/my-json-server:latest`,
     );
   },
 
@@ -54,17 +54,20 @@ const scripts = {
   releasePatch: () => {
     run('npm version patch');
     scripts.dockerRelease();
+    scripts.incrementBuild();
     run('git push --follow-tags');
   },
 
   releaseMinor: () => {
     run('npm version minor');
+    scripts.incrementBuild();
     scripts.dockerRelease();
     run('git push --follow-tags');
   },
 
   releaseMajor: () => {
     run('npm version major');
+    scripts.incrementBuild();
     scripts.dockerRelease();
     run('git push --follow-tags');
   },
@@ -79,6 +82,9 @@ const scripts = {
 
     fs.writeFileSync(pkgPath, JSON.stringify(pkgJson, null, 2) + '\n', 'utf-8');
     console.log(`Build number updated to ${pkgJson.build} version ${pkgJson.fullVersion}`);
+
+    run('git add .');
+    run('git commit -m "Build bump/version update"');
   },
 };
 
