@@ -16,5 +16,8 @@ COPY . .
 # Expose the internal port your app listens on (matches CONFIG.PORT default)
 EXPOSE 3000
 
+RUN addgroup -S app && adduser -S app -G app
+USER app
+
 # Start command
 CMD ["npm","start"]

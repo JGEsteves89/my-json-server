@@ -4,7 +4,7 @@ services:
   downloader:
     build: .
     ports:
-      - '3131:3000' # external:internal, since CONFIG.PORT defaults to 3000
+      - '3000:3000' # external:internal, since CONFIG.PORT defaults to 3000
     environment:
       DATA_DIR: '/app/data' # app’s internal writable data dir
       API_TOKENS_PATH: 'defaultApiKeys.json' # external user-provided config
