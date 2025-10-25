@@ -2,6 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { CONFIG } from './config.js';
 import { ensureDataDir } from './utils.js';
 import { apiTokenMiddleware } from './apiTokenMiddleware.js';
@@ -9,6 +13,23 @@ import { errorHandler } from './errorHandler.js';
 import WebSocketManager from './websocket.js';
 import routes from './routes.js';
 import { createLogger } from './logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const pkgPath = path.resolve(__dirname, '../package.json');
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+
+const banner = `
+▄▄▄▄  ▄   ▄     ▗▖ ▄▄▄  ▄▄▄  ▄▄▄▄    ▄▄▄▗▞▀▚▖ ▄▄▄ ▄   ▄ ▗▞▀▚▖ ▄▄▄ 
+█ █ █ █   █     ▗▖▀▄▄  █   █ █   █  ▀▄▄ ▐▛▀▀▘█    █   █ ▐▛▀▀▘█    
+█   █  ▀▀▀█  ▄  ▐▌▄▄▄▀ ▀▄▄▄▀ █   █  ▄▄▄▀▝▚▄▄▖█     ▀▄▀  ▝▚▄▄▖█    
+          █  ▀▄▄▞▘                                                 
+`;
+
+console.log(banner); // eslint-disable-line no-console
+console.log(`*** my-json-server-v${pkg.fullVersion} ***`); // eslint-disable-line no-console
+console.log('-------------------------------------------'); // eslint-disable-line no-console
 
 class Server {
   constructor() {

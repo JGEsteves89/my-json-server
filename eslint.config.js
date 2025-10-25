@@ -6,8 +6,10 @@ import security from 'eslint-plugin-security';
 import sonarjs from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
 import globals from 'globals';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
-export default [
+export default defineConfig([
+  globalIgnores(['scripts.js']),
   // Ignore these directories (files here will not be linted)
   {
     ignores: ['**/node_modules/**', 'dist/**'],
@@ -105,4 +107,4 @@ export default [
 
   // Prevent conflicts with Prettier formatting rules
   prettier,
-];
+]);
