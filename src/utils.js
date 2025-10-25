@@ -10,19 +10,21 @@ import { CONFIG } from './config.js';
  */
 export function jsonPath(parts, appName) {
   const valid = /^[a-zA-Z0-9_-]+$/;
-
   for (const p of parts) {
     if (!valid.test(p)) {
-      return null;
+      throw new Error('Invalid path component: ' + p);
     }
   }
 
-  const filePath = path.join(CONFIG.DATA_DIR, appName, ...parts) + '.json';
+  // Normalize base dir once
+  const baseDir = path.resolve(process.cwd(), CONFIG.DATA_DIR, appName);
+  const filePath = path.join(baseDir, ...parts) + '.json';
   const resolved = path.resolve(filePath);
 
-  if (!resolved.startsWith(path.resolve(CONFIG.DATA_DIR))) {
+  if (!resolved.startsWith(baseDir)) {
     throw new Error('Invalid path');
   }
+
   return resolved;
 }
 
@@ -91,8 +93,8 @@ export function validJsonData(data) {
  * @param {string} filePath - full path of the file
  */
 export function pathIdentifier(filePath, appName) {
-  const cwdData = path.join(process.cwd(), CONFIG.DATA_DIR, appName);
-  const relativePath = path.relative(cwdData, filePath);
+  const baseDir = path.resolve(process.cwd(), CONFIG.DATA_DIR, appName);
+  const relativePath = path.relative(baseDir, filePath);
   return '/' + relativePath.replace(/\.json$/, '');
 }
 

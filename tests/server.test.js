@@ -1,8 +1,10 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import request from 'supertest';
 import WebSocket from 'ws';
 
 import server from '../src/server.js';
+import { jsonPath, pathIdentifier } from '../src/utils.js';
 import { CONFIG } from '../src/config.js';
 
 const app = server.app;
@@ -17,6 +19,44 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await server.stop();
+});
+
+describe('Path Utilities', () => {
+  const appName = 'TEST_APP';
+
+  test('jsonPath builds valid absolute path', () => {
+    const parts = ['this', 'is', 'a', 'test'];
+    const result = jsonPath(parts, appName);
+
+    expect(result.endsWith('/data/TEST_APP/this/is/a/test.json')).toBe(true);
+    expect(path.isAbsolute(result)).toBe(true);
+  });
+
+  test('pathIdentifier reverses jsonPath correctly', () => {
+    const parts = ['this', 'is', 'a', 'test'];
+    const file = jsonPath(parts, appName);
+    const pathId = pathIdentifier(file, appName);
+
+    expect(pathId).toBe('/this/is/a/test');
+  });
+
+  test('round-trip pathId → file → pathId stays identical', () => {
+    const parts = ['this', 'is', 'a', 'test'];
+    const file = jsonPath(parts, appName);
+    const pathId = pathIdentifier(file, appName);
+
+    const reconstructed = pathIdentifier(jsonPath(parts, appName), appName);
+    expect(reconstructed).toBe(pathId);
+  });
+
+  test('throws error for invalid characters', () => {
+    expect(() => jsonPath(['..', 'evil'], appName)).toThrow('Invalid path component');
+  });
+
+  test('prevents escaping base directory', () => {
+    const evilParts = ['..', '..', 'etc', 'passwd'];
+    expect(() => jsonPath(evilParts, appName)).toThrow('Invalid path');
+  });
 });
 
 describe('API Access Control and WebSocket Behavior', () => {

@@ -41,17 +41,23 @@ class Server {
 
   async start() {
     return new Promise((resolve) => {
+      const log = createLogger('SYSTEM', 'SERVER', 'startup');
       // Ensure data directory exists
       ensureDataDir();
 
       this.server = this.app.listen(CONFIG.PORT, () => {
-        const log = createLogger('SYSTEM', 'SERVER', 'startup');
         log.info(`Server started on http://localhost:${CONFIG.PORT}`);
         resolve();
       });
+
       this.server.on('upgrade', (req, socket, head) =>
         this.wsManager.handleUpgrade(req, socket, head),
       );
+
+      this.server.on('error', (err) => {
+        log.info('Server listen error:', err);
+        this.server.close(resolve);
+      });
     });
   }
 

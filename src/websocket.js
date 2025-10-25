@@ -30,8 +30,6 @@ class WebSocketManager {
         path: jsonFile,
         data: shortify(data),
       });
-    } else {
-      log.info('No clients watching file', { jsonFile });
     }
   }
 
@@ -94,6 +92,7 @@ class WebSocketManager {
       }
       this.watchers.get(watchPath).add(ws);
       log.info('Client added to watchers', {
+        appName,
         path: watchPath,
         totalWatchers: this.watchers.get(watchPath).size,
       });

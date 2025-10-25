@@ -18,7 +18,15 @@ const validatePath = (req, res, next) => {
   try {
     const parts = req.params.path;
     const file = jsonPath(parts, req.appName);
-    return { file, pathId: pathIdentifier(file, req.appName) };
+    const pathId = pathIdentifier(file, req.appName);
+
+    // ✅ Validation step: confirm round-trip integrity
+    const revalidated = pathIdentifier(jsonPath(parts, req.appName), req.appName);
+    if (revalidated !== pathId) {
+      return next(new ValidationError(`Path validation mismatch: ${revalidated} != ${pathId}`));
+    }
+
+    return { file, pathId };
   } catch (error) {
     const log = createLogger(req.appName, 'VAL', req.path);
     log.info('Validation error', error);
