@@ -7,7 +7,7 @@ const pkg = require(pkgPath);
 const version = pkg.version;
 const buildNumber = pkg.build || 1;
 const releaseId = pkg.releaseIdentifier || 'build';
-const fullVersion = pkg.fullVersion || `${version}-${releaseId}${buildNumber}`;
+const fullVersion = `${version}-${releaseId}${buildNumber}`;
 
 function run(command) {
   console.log(`> ${command}`);
