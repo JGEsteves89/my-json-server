@@ -1,6 +1,6 @@
 {
   "name": "myjsonserver",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "build": 10,
   "releaseIdentifier": "build",
   "fullVersion": "1.0.6-build10",
