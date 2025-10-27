@@ -30,6 +30,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "winston": "^3.18.3",

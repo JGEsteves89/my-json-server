@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
+import cors from 'cors';
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -42,6 +43,14 @@ class Server {
   setupMiddleware() {
     // Body parser
     this.app.use(bodyParser.json());
+
+    // setup CORS
+    this.app.use(
+      cors({
+        origin: CONFIG.ALLOWRD_ORIGIN,
+        methods: ['GET', 'POST', 'DELETE'],
+      }),
+    );
 
     // Rate limiting
     const limiter = rateLimit(CONFIG.RATE_LIMIT);

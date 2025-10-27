@@ -1,4 +1,4 @@
-# My-JSON-server
+# My-JSON-Server
 
 A lightweight, token-authenticated JSON file server with real-time WebSocket support. Store and retrieve JSON data files with built-in access control, rate limiting, and comprehensive logging.
 
@@ -403,6 +403,7 @@ For issues, questions, or suggestions:
 
 ### Version
 
+- 1.0.4 - Added CORS and exposed seetins of allowed CORS
 - 1.0.3 - Fix bug with permissions and path calculation when running on the docker
 - 1.0.2 - Changed from API_TOKENS environment variable to API_TOKENS_PATH for security and flexibility
 - 1.0.1 - RESTful API endpoints
