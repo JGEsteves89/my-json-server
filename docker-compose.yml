@@ -7,11 +7,9 @@ services:
     ports:
       - '3000:3000' # external:internal, since CONFIG.PORT defaults to 3000
     environment:
-      DATA_DIR: '/app/data' # app’s internal writable data dir
-      API_TOKENS_PATH: 'defaultApiKeys.json' # external user-provided config
       ALLOWED_ORIGIN: '*'
       RATE_LIMIT_WINDOW_MS: 60000
       RATE_LIMIT_MAX: 100
     volumes:
       - ./data:/app/data # writable local folder for app data
-      - ./defaultApiKeys.json:/config/apiKeys.json:ro # user-provided token file (read-only)
+      - ./myApiKeys.json:/app/apiKeys.json:ro # user-provided token file (read-only)

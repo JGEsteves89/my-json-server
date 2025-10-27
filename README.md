@@ -23,7 +23,49 @@ A lightweight, token-authenticated JSON file server with real-time WebSocket sup
 | DELETE | `/*path` | Delete JSON file           | Yes           | Status and path     |
 | WS     | `/*path` | Subscribe to file changes  | Yes           | Real-time updates   |
 
-## Installation
+
+##  Usage
+
+You can run my-json-server using Docker:
+
+1. Pull the image
+
+```bash
+docker pull ijimiguel/my-json-server:latest
+```
+
+(Or specify a version tag, e.g. :1.0.2)
+
+2. Run the container with necessary environment variables and volume mounts:
+
+```yml
+# docker-compose.yml
+version: '3.9'
+
+services:
+  app:
+    image: ijimiguel/my-json-server:latest
+    user: "${UID}:${GID}" # has to have rights to the data folder and tokens_file
+    ports:
+      - '3000:3000' # external:internal, since CONFIG.PORT defaults to 3000
+    environment:
+      ALLOWED_ORIGIN: '*'
+      RATE_LIMIT_WINDOW_MS: 60000
+      RATE_LIMIT_MAX: 100
+    volumes:
+      - ./data:/app/data # writable local folder for app data
+      - ./myApiKeys.json:/config/apiKeys.json:ro # user-provided token file (read-only)
+```
+
+This will:
+
+- Map port 3000 from the container to your host
+- Store the jsons on ./data host folder
+- Get the api keys from host in ./myApiKeys.json 
+- Set the required environment variables
+
+
+## Developing
 
 ### Prerequisites
 
@@ -51,96 +93,13 @@ git remote add origin https://github.com/JGEsteves89/my-json-server.git
 npm install
 ```
 
-3. Start the server:
-
-```bash
-npm start
-```
-
-The server will start on `http://localhost:3000` by default.
-
-## Docker Setup
-
-You can run my-json-server using Docker:
-
-1. Pull the image
-
-```bash
-docker pull ijimiguel/my-json-server:latest
-```
-
-(Or specify a version tag, e.g. :1.0.2)
-
-2. Run the container with necessary environment variables and volume mounts:
-
-```yml
-# docker-compose.yml
-version: '3.9'
-
-services:
-  app:
-    image: ijimiguel/my-json-server:latest
-    user: '${UID}:${GID}' # has to have rights to the data folder and tokens_file
-    ports:
-      - '3000:3000' # external:internal, since CONFIG.PORT defaults to 3000
-    environment:
-      DATA_DIR: '/app/data' # app’s internal writable data dir
-      API_TOKENS_PATH: 'defaultApiKeys.json' # external user-provided config
-      ALLOWED_ORIGIN: '*' # Allowed CORS origins
-      RATE_LIMIT_WINDOW_MS: 60000
-      RATE_LIMIT_MAX: 100
-    volumes:
-      - ./data:/app/data # writable local folder for app data
-      - ./defaultApiKeys.json:/config/apiKeys.json:ro # user-provided token
-```
-
-This will:
-
-- Map port 3000 from the container to your host
-- Mount your local data directory to persist JSON files
-- Mount the API keys file
-- Set the required environment variables
-
-## Configuration
-
-Configure the server using environment variables:
-
-```bash
-# Server port
-PORT=3000
-
-# Data directory for storing JSON files
-DATA_DIR=./data
-
-# Path to JSON file containing API tokens (mapping app names to tokens)
-API_TOKENS_PATH=./defaultApiKeys.json
-
-# Allowed CORS origins
-ALLOWED_ORIGIN: '*'
-
-# Rate limiting window (milliseconds)
-RATE_LIMIT_WINDOW_MS=60000
-
-# Rate limiting max requests per window
-RATE_LIMIT_MAX=100
-```
-
-### Example
-
-```bash
-PORT=8080 \
-DATA_DIR=./my_data \
-API_TOKENS_PATH=./defaultApiKeys.json \
-npm start
-```
-
-## Usage
-
 ### Starting the Server
 
 ```bash
 npm start
 ```
+The server will start on `http://localhost:3000` by default.
+
 
 ### Running Tests
 
@@ -406,7 +365,7 @@ For issues, questions, or suggestions:
 ## Changelog
 
 ### Version
-
+- 1.0.5 - Made the configuration simpler
 - 1.0.4 - Added CORS and exposed seetins of allowed CORS
 - 1.0.3 - Fix bug with permissions and path calculation when running on the docker
 - 1.0.2 - Changed from API_TOKENS environment variable to API_TOKENS_PATH for security and flexibility
