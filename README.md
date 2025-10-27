@@ -60,7 +60,14 @@ services:
 
 3. Run docker with user rights
 ```bash
-UID=$(id -u) GID=$(id -g) docker-compose up -d
+# make sure to create the data folder and set the correct permissions
+mkdir -p ./data
+chown $(id -u):$(id -g) ./data
+
+export UID=$(id -u)
+export GID=$(id -g)
+
+docker-compose up -d
 ```
 
 This will:
