@@ -1,9 +1,9 @@
 {
   "name": "myjsonserver",
   "version": "1.0.4",
-  "build": 7,
+  "build": 8,
   "releaseIdentifier": "build",
-  "fullVersion": "1.0.3-build7",
+  "fullVersion": "1.0.4-build8",
   "description": "",
   "main": "src/server.js",
   "type": "module",
