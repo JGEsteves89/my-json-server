@@ -374,6 +374,7 @@ For issues, questions, or suggestions:
 ## Changelog
 
 ### Version
+- 1.0.5 - Fix bug on Dockerfile build error
 - 1.0.5 - Created a script to be run on docker image to fix the user/host/image permitions nightmare
 - 1.0.5 - Made the configuration simpler
 - 1.0.4 - Added CORS and exposed seetins of allowed CORS
