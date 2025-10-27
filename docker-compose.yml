@@ -9,6 +9,7 @@ services:
     environment:
       DATA_DIR: '/app/data' # app’s internal writable data dir
       API_TOKENS_PATH: 'defaultApiKeys.json' # external user-provided config
+      ALLOWED_ORIGIN: '*'
       RATE_LIMIT_WINDOW_MS: 60000
       RATE_LIMIT_MAX: 100
     volumes:

@@ -86,6 +86,7 @@ services:
     environment:
       DATA_DIR: '/app/data' # app’s internal writable data dir
       API_TOKENS_PATH: 'defaultApiKeys.json' # external user-provided config
+      ALLOWED_ORIGIN: '*' # Allowed CORS origins
       RATE_LIMIT_WINDOW_MS: 60000
       RATE_LIMIT_MAX: 100
     volumes:
@@ -113,6 +114,9 @@ DATA_DIR=./data
 
 # Path to JSON file containing API tokens (mapping app names to tokens)
 API_TOKENS_PATH=./defaultApiKeys.json
+
+# Allowed CORS origins
+ALLOWED_ORIGIN: '*'
 
 # Rate limiting window (milliseconds)
 RATE_LIMIT_WINDOW_MS=60000
