@@ -23,8 +23,7 @@ A lightweight, token-authenticated JSON file server with real-time WebSocket sup
 | DELETE | `/*path` | Delete JSON file           | Yes           | Status and path     |
 | WS     | `/*path` | Subscribe to file changes  | Yes           | Real-time updates   |
 
-
-##  Usage
+## Usage
 
 You can run my-json-server using Docker:
 
@@ -45,7 +44,7 @@ version: '3.9'
 services:
   app:
     image: ijimiguel/my-json-server:latest
-    user: "${UID}:${GID}"   # Optional: only if you want to match host user
+    user: '${UID}:${GID}' # Optional: only if you want to match host user
     ports:
       - '4123:3000' # external:internal, since CONFIG.PORT defaults to 3000
     environment:
@@ -59,6 +58,7 @@ services:
 ```
 
 3. Run docker with user rights
+
 ```bash
 # make sure to create the data folder and set the correct permissions
 mkdir -p ./data
@@ -74,10 +74,11 @@ This will:
 
 - Map port 3000 from the container to your host
 - Store the jsons on ./data host folder
-- Get the api keys from host in ./myApiKeys.json 
+- Get the api keys from host in ./myApiKeys.json
 - Set the required environment variables
 
 4. To stop
+
 ```bash
 docker-compose down
 ```
@@ -115,8 +116,8 @@ npm install
 ```bash
 npm start
 ```
-The server will start on `http://localhost:3000` by default.
 
+The server will start on `http://localhost:3000` by default.
 
 ### Running Tests
 
@@ -382,6 +383,8 @@ For issues, questions, or suggestions:
 ## Changelog
 
 ### Version
+
+- 1.0.8 - Fixed docker folder permissions and instructions
 - 1.0.5 - Fix bug on Dockerfile build error
 - 1.0.5 - Created a script to be run on docker image to fix the user/host/image permitions nightmare
 - 1.0.5 - Made the configuration simpler

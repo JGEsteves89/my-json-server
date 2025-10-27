@@ -7,6 +7,8 @@ import server from '../src/server.js';
 import { jsonPath, pathIdentifier } from '../src/utils.js';
 import { CONFIG } from '../src/config.js';
 
+CONFIG.API_TOKENS_PATH = './test-tokens.json';
+
 const app = server.app;
 const pathId = '/a';
 const wsUrl = `ws://localhost:${CONFIG.PORT}${pathId}`;
