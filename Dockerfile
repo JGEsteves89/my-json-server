@@ -16,12 +16,17 @@ COPY . .
 # Expose the internal port your app listens on (matches CONFIG.PORT default)
 EXPOSE 3000
 
-# Copy entrypoint and make it executable as root
+# Create a non-root user for the container
+RUN addgroup -S app && adduser -S app -G app
+
+# Create empty /data directory for bind mount
+RUN mkdir -p /usr/src/app/data && chown app:app /usr/src/app/data
+
+# Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Create default app user and switch to it
-RUN addgroup -S app && adduser -S app -G app
+# Run as non-root by default
 USER app
 
 ENTRYPOINT ["docker-entrypoint.sh"]

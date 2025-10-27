@@ -3,6 +3,7 @@ version: '3.9'
 services:
   app:
     image: ijimiguel/my-json-server:latest
+    user: "${UID}:${GID}"   # Optional: only if you want to match host user
     ports:
       - '4123:3000' # external:internal, since CONFIG.PORT defaults to 3000
     environment:
