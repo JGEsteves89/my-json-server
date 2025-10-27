@@ -16,8 +16,13 @@ COPY . .
 # Expose the internal port your app listens on (matches CONFIG.PORT default)
 EXPOSE 3000
 
+# Create default app user
 RUN addgroup -S app && adduser -S app -G app
 USER app
 
-# Start command
-CMD ["npm","start"]
+# Copy entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["npm", "start"]

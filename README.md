@@ -45,7 +45,6 @@ version: '3.9'
 services:
   app:
     image: ijimiguel/my-json-server:latest
-    user: "${UID}:${GID}" # has to have rights to the data folder and tokens_file
     ports:
       - '4123:3000' # external:internal, since CONFIG.PORT defaults to 3000
     environment:
@@ -55,6 +54,7 @@ services:
     volumes:
       - ./data:/usr/src/app/data # writable local folder for app data
       - ./myApiKeys.json:/usr/src/app/apiKeys.json:ro # user-provided token file (read-only)
+    restart: always
 ```
 
 3. Run docker with user rights
@@ -374,6 +374,7 @@ For issues, questions, or suggestions:
 ## Changelog
 
 ### Version
+- 1.0.5 - Created a script to be run on docker image to fix the user/host/image permitions nightmare
 - 1.0.5 - Made the configuration simpler
 - 1.0.4 - Added CORS and exposed seetins of allowed CORS
 - 1.0.3 - Fix bug with permissions and path calculation when running on the docker
