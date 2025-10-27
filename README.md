@@ -47,14 +47,19 @@ services:
     image: ijimiguel/my-json-server:latest
     user: "${UID}:${GID}" # has to have rights to the data folder and tokens_file
     ports:
-      - '3000:3000' # external:internal, since CONFIG.PORT defaults to 3000
+      - '4123:3000' # external:internal, since CONFIG.PORT defaults to 3000
     environment:
       ALLOWED_ORIGIN: '*'
       RATE_LIMIT_WINDOW_MS: 60000
       RATE_LIMIT_MAX: 100
     volumes:
-      - ./data:/app/data # writable local folder for app data
-      - ./myApiKeys.json:/config/apiKeys.json:ro # user-provided token file (read-only)
+      - ./data:/usr/src/app/data # writable local folder for app data
+      - ./myApiKeys.json:/usr/src/app/apiKeys.json:ro # user-provided token file (read-only)
+```
+
+3. Run docker with user rights
+```bash
+UID=$(id -u) GID=$(id -g) docker-compose up -d
 ```
 
 This will:
@@ -64,6 +69,10 @@ This will:
 - Get the api keys from host in ./myApiKeys.json 
 - Set the required environment variables
 
+4. To stop
+```bash
+docker-compose down
+```
 
 ## Developing
 
